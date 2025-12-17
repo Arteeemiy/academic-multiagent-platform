@@ -1,0 +1,13 @@
+﻿# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+
+# Virtual env
+ai_multiagent_system_venv/
+.venv/
+
+# Outputs
+outputs/

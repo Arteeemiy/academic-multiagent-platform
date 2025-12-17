@@ -1,0 +1,8 @@
+﻿llm:
+  provider: mistral
+  model: mistral-large
+  temperature: 0.3
+
+embeddings:
+  provider: sentence-transformers
+  model: intfloat/multilingual-e5-base
