@@ -14,10 +14,6 @@ The system follows a layered architecture:
 - Tools — explicit retrieval and parsing utilities
 - Crew — orchestration layer
 
-## Project Structure
-
-(вставь дерево)
-
 ## Agents
 
 - Planner — builds structured outline
