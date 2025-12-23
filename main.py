@@ -1,49 +1,68 @@
-﻿from dotenv import load_dotenv
+﻿# main.py
+from dotenv import load_dotenv
 from pathlib import Path
 import os
+import asyncio
+import json
 
+# =====================
+# ENV
+# =====================
 ENV_PATH = Path(
     "/Users/user/Desktop/AI_DL/LLM/MyProjects/AI_Multiagent_System_Coursework/.env"
 )
 load_dotenv(dotenv_path=ENV_PATH)
 
-print("ENV PATH EXISTS:", ENV_PATH.exists())
-print("KEY:", os.getenv("OPENAI_API_KEY"))
+assert os.getenv("MISTRAL_API_KEY"), "MISTRAL_API_KEY not found in env"
 
-from crewai import LLM
-from knowledge.loaders import load_knowledge_sources
-from agents.planner import create_planner
-from agents.writer import create_writer
-from agents.editor import create_editor
-from agents.validator import create_validator
-from crew.crew import create_crew
-
-import os
-
-print("KEY:", os.getenv("OPENAI_API_KEY"))
+os.environ["CREWAI_TELEMETRY_ENABLED"] = "false"
+os.environ["CREWAI_DISABLE_OPENAI"] = "true"
 
 
-def main():
-    knowledge_sources = load_knowledge_sources()
-    llm = LLM(
-        model="mistral-large-2512",
-        temperature=0,
-        base_url="https://api.mistral.ai/v1",
+# =====================
+# PIPELINE
+# =====================
+from core.execution_state import ExecutionState
+from core.crew_factory import run_coursework_crew
+
+
+TOPIC = (
+    "Разработка базы данных информационной подсистемы учета характеристик "
+    "биологически опасных объектов в муниципальном образовании"
+)
+
+
+async def run():
+    # workflow-level state (НЕ user state)
+    exec_state = ExecutionState(topic=TOPIC)
+
+    result = await run_coursework_crew(
+        topic=TOPIC,
+        execution_state=exec_state,
     )
 
-    agents = {
-        "planner": create_planner(llm),
-        "writer": create_writer(llm),
-        "validator": create_validator(llm),
-        "editor": create_editor(llm),
-    }
-
-    topic = "Разработка базы данных информационной подсистемы учета характеристик биологически опасных объектов в муниципальном образовании"
-    crew = create_crew(agents, topic, knowledge_sources=knowledge_sources)
-
-    result = crew.kickoff()
+    print("\n===== FINAL RESULT =====\n")
     print(result)
+
+    print("\n===== PIPELINE STATE =====\n")
+    print(f"Stage: {exec_state.pipeline_stage}")
+    print(f"Timings: {exec_state.timings}")
+    print(f"Artifacts: {list(exec_state.artifacts.keys())}")
+
+    # опционально — сохранить state для дебага
+    with open("outputs/execution_state.json", "w", encoding="utf-8") as f:
+        json.dump(
+            {
+                "topic": exec_state.topic,
+                "pipeline_stage": exec_state.pipeline_stage,
+                "timings": exec_state.timings,
+                "artifacts": list(exec_state.artifacts.keys()),
+            },
+            f,
+            ensure_ascii=False,
+            indent=2,
+        )
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(run())

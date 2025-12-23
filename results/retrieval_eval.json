@@ -1,0 +1,37 @@
+{
+  "stage": "retriever_chunking_sweep",
+  "date": "2025-12-21T12:34:32.022689",
+  "metric": "Hit@K",
+  "setup": {
+    "k": 9,
+    "embedding": "sentence-transformers/LaBSE",
+    "chunking": {
+      "c400_o50": {
+        "chunk_size": 400,
+        "overlap": 50
+      },
+      "c600_o100": {
+        "chunk_size": 600,
+        "overlap": 100
+      },
+      "c800_o150": {
+        "chunk_size": 800,
+        "overlap": 150
+      },
+      "c1000_o200": {
+        "chunk_size": 1000,
+        "overlap": 200
+      }
+    }
+  },
+  "results": {
+    "c400_o50": 0.744,
+    "c600_o100": 0.756,
+    "c800_o150": 0.78,
+    "c1000_o200": 0.817
+  },
+  "best": {
+    "key": "c1000_o200",
+    "score": 0.817
+  }
+}

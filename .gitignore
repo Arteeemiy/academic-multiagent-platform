@@ -11,3 +11,6 @@ ai_multiagent_system_venv/
 
 # Outputs
 outputs/
+
+# Chroma DB
+knowledge/chromadb_*/
